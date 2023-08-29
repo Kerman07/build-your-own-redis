@@ -21,6 +21,15 @@ def accept_connection(conn, addr):
             if "\r\necho" in data:
                 word = data.split("\r\n")[-2]
                 conn.send(RESP.resp_single_string(word))
+            elif "\r\nset" in data:
+                key, val = data.split("\r\n")[-4], data.split("\r\n")[-2]
+                print(key, val)
+                memory[key] = val
+                conn.send(RESP.resp_single_string("OK"))
+            elif "\r\nget" in data:
+                key = data.split("\r\n")[-2]
+                print(key)
+                conn.send(RESP.resp_single_string(memory[key]))
             else:
                 conn.send(RESP.resp_single_string("PONG"))
 
@@ -35,4 +44,5 @@ def main():
 
 
 if __name__ == "__main__":
+    memory = {}
     main()
